@@ -32,7 +32,7 @@ function renderResultFound(countries) {
     }
 
     if(countries.length > 10){
-        Notiflix.Notify.info('Please, enter a more specific country name');
+        Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
         return;
     }
 
