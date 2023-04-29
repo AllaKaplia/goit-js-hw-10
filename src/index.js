@@ -1,14 +1,24 @@
 import './css/styles.css';
 var debounce = require('lodash.debounce');
-import NewsFetchCountriesAPI from "./js/fetchCountries";
-import getRefs from "./js/refs";
+
+
+
 
 const DEBOUNCE_DELAY = 300;
-let name = '';
-const newsFetchCountriesAPI = new NewsFetchCountriesAPI;
-const refs = getRefs();
+let name = "";
 
-refs.inputSearch.addEventListener('submit', onSearchCountry);
+const refs = {
+    inputSearch: document.querySelector('input#search-box'),
+    listCountry: document.querySelector('.country-list'),
+    infoCountry: document.querySelector('.country-info'),
+};
+
+refs.inputSearch.addEventListener('input', onSearchCountry);
+
+function fetchCountries(name) {
+    fetch(`https://restcountries.com/v3.1/all?fields=${name},name.official,capital,population,flags.svg,languages`)
+    .then(response => response.json());
+}
 
 function onSearchCountry(evt) {
     evt.preventDefault();
@@ -16,7 +26,14 @@ function onSearchCountry(evt) {
     name = evt.currentTarget.elements.query.value;
     console.log(name);
 
-    newsFetchCountriesAPI.fetchCountries(name);
+  if(name.length === 1){
+    fetchCountries(name).then(country => renderCountryCard(country))
+    .catch(error => console.log(error));
+  } else if(name.length > 2 && name.length < 10){
+    fetchCountries(name).then(country => markupCountryList(country))
+    .catch(error => console.log(error));
+  }
+
 }
 
 function markupCountryList (countries){
