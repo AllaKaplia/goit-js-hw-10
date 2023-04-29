@@ -1,11 +1,8 @@
 import './css/styles.css';
 var debounce = require('lodash.debounce');
 
-
-
-
 const DEBOUNCE_DELAY = 300;
-let name = "";
+let name = ""; 
 
 const refs = {
     inputSearch: document.querySelector('input#search-box'),
@@ -13,24 +10,22 @@ const refs = {
     infoCountry: document.querySelector('.country-info'),
 };
 
-refs.inputSearch.addEventListener('input', onSearchCountry);
+refs.inputSearch.addEventListener('input', debounce(onSearchCountry, DEBOUNCE_DELAY));
 
 function fetchCountries(name) {
-    fetch(`https://restcountries.com/v3.1/all?fields=${name},name.official,capital,population,flags.svg,languages`)
-    .then(response => response.json());
+    return fetch(`https://restcountries.com/v3.1/all?fields=${name},name.official,capital,population,flags.svg,languages`).then(response => response.json());
 }
 
 function onSearchCountry(evt) {
     evt.preventDefault();
 
-    name = evt.currentTarget.elements.query.value;
-    console.log(name);
+    name = evt.target.value;
 
   if(name.length === 1){
     fetchCountries(name).then(country => renderCountryCard(country))
     .catch(error => console.log(error));
   } else if(name.length > 2 && name.length < 10){
-    fetchCountries(name).then(country => markupCountryList(country))
+    fetchCountries(`'${name}'`).then(country => markupCountryList(country))
     .catch(error => console.log(error));
   }
 
@@ -64,5 +59,3 @@ function renderCountryCard(countries) {
 
     refs.infoCountry.innerHTML = markupCountryCard;
 }
-
-
